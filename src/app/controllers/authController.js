@@ -59,12 +59,12 @@ router.post('/authenticate', async (req, res) => {
 router.post('/forgot_password', async (req, res) => {
     const { email } = req.body;
 
-    try{
+    try {
         const user = await User.findOne({ email });
 
         if(!user)
             return res.status(400).send({ error: 'User not found' });
-            
+
         const token = crypto.randomBytes(20).toString('hex');
 
         const now = new Date();
@@ -83,17 +83,18 @@ router.post('/forgot_password', async (req, res) => {
             template: 'auth/forgot_password',
             context: { token },
         }, 
+
         (err) => {
             if(err)
                 return res.status(400).send({ error: 'Cannot send forgot password email' });
-                
+
             return res.send();
-            
-        })
-    }catch(err){
+        });
+
+    } catch(err) {
+        console.log(token);
         res.status(400).send({ error: 'Erro on forgot password, try again' });
     }
-
 });
 
 router.post('/reset_password', async (req, res) => {
@@ -104,7 +105,7 @@ router.post('/reset_password', async (req, res) => {
             .select('+passwordResetToken passwordResetExpires');
             
     if(!user)
-    return res.status(400).send({ error: 'User not found' });
+        return res.status(400).send({ error: 'User not found' });
 
     if(token !== user.passwordResetToken)
         return res.status(400).send({ error: 'Token invalid' });
@@ -126,5 +127,4 @@ router.post('/reset_password', async (req, res) => {
 
 });
  
-
 module.exports = app => app.use('/auth', router);
