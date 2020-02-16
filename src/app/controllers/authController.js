@@ -6,7 +6,7 @@ const mailer = require('../../modules/mailer');
 
 const authConfig = require('../../config/auth');
 
-const User = require('../models/User');
+const User = require('../models/user');
 
 const router = express.Router();
 
@@ -56,7 +56,7 @@ router.post('/authenticate', async (req, res) => {
      });
 });
 
-router.post('/forgot_password', async (req, res) => {
+router.post('/forgot_password', async (req, res) => { 
     const { email } = req.body;
 
     try {
@@ -81,18 +81,17 @@ router.post('/forgot_password', async (req, res) => {
             to: email,
             from: 'thiagoapalacios@hotmail.com',
             template: 'auth/forgot_password',
-            context: { token },
-        }, 
-
-        (err) => {
-            if(err)
+            context: { token }
+        }, (err) => {
+            if(err){
+                console.log(err);
                 return res.status(400).send({ error: 'Cannot send forgot password email' });
-
+            }
             return res.send();
-        });
+        })
 
     } catch(err) {
-        console.log(token);
+        console.log(err);
         res.status(400).send({ error: 'Erro on forgot password, try again' });
     }
 });
@@ -122,6 +121,7 @@ router.post('/reset_password', async (req, res) => {
     res.send();
 
     } catch(err){
+        console.log(err);
         res.status(400).send({ error: 'Canot reset password, try again' });
     }
 

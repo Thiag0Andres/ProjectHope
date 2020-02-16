@@ -17,16 +17,6 @@ const UserSchema = new mongoose.Schema({
         required: true,
         select: false,
     },
-    avatar: {
-        type: String,
-    },
-    tokenNotification: {
-        type: String,
-    },
-    isAdmin: {
-        type: Boolean,
-        default: false,
-    },
     passwordResetToken: {
         type: String,
         select: false,
