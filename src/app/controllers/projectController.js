@@ -32,6 +32,7 @@ router.get('/:projectId', async (req, res) => {
 
 });
 
+//CREATE com problrema na exibição
 router.post('/', async (req, res) => {
     try {
         const { title, description, tasks } = req.body;
