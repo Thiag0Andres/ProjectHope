@@ -11,8 +11,8 @@ router.use(authMiddleware);
 router.get('/', async (req, res)=>{
 
     try {
-        const projects = await Project.find().populate(['user', 'tasks']);
-        return res.send({projects});
+        const project = await Project.find().populate(['user', 'tasks']);
+        return res.send({ project });
 
     } catch (err) {
         return res.status(400).send({error: 'Loading error'});
@@ -22,8 +22,8 @@ router.get('/', async (req, res)=>{
 
 router.get('/:projectId', async (req, res) => {
     try {
-        const projects = await Project.findById(req.params.projectId).populate(['user', 'tasks']);
-        return res.send({projects});
+        const project = await Project.findById(req.params.projectId).populate(['user', 'tasks']);
+        return res.send({ project });
 
     } catch (err) {
         console.log(err);
@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
     try {
         const { title, description, tasks } = req.body;
 
-        const project = await Project.create({title, description, user: req.userId});
+        const project = await Project.create({ title, description, user: req.userId });
 
         await Promise.all(tasks.map(async task => {
             const projectTask = new Task({ ...task, project: project._id});
@@ -47,12 +47,11 @@ router.post('/', async (req, res) => {
 
         await project.save();
 
-        return res.send({project});
+        return res.send({ project });
 
     } catch (err) {
         console.log(err);
         return res.status(400).send({error : 'Error'});   
-
     }
 
 });
@@ -78,7 +77,7 @@ router.put('/:projectId', async (req, res) => {
 
         await project.save();
 
-        return res.send({project});
+        return res.send({ project });
 
     } catch (err) {
         console.log(err);
@@ -89,12 +88,11 @@ router.put('/:projectId', async (req, res) => {
 
 router.delete('/:projectId', async (req, res) => {
     try {
-        const projects = await Project.findByIdAndRemove(req.params.projectId);
+        const project = await Project.findByIdAndRemove(req.params.projectId);
         return res.send();
 
     } catch (err) {
-        console.log(err);
-        return res.status(400).send({error: 'Could not delete project'});
+        return res.status(400).send({ error: 'Erro deleting project' });
     }
 
 });
