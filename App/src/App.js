@@ -1,12 +1,4 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
-
-import React from 'react';
+import React, { Component } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -14,6 +6,7 @@ import {
   View,
   Text,
   StatusBar,
+  AsyncStorage,
 } from 'react-native';
 
 import {
@@ -24,7 +17,7 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-const App: () => React$Node = () => {
+/*const App: () => React$Node = () => {
   return (
     <>
       <StatusBar barStyle="dark-content" />
@@ -71,7 +64,42 @@ const App: () => React$Node = () => {
     </>
   );
 };
+*/
 
+import api from './services/api';
+
+export default class App extends Component {
+  state = {
+    errorMessage: null,
+  }
+
+  singIn = async () => {
+    try {
+      const response = await api.post('auth/authenticate', {
+        email: 'thiagoapalacios@hotmail.com',
+        password: '123456',
+      });
+  
+      const { user, token } = response.data;
+  
+      await AsyncStorage.multiSet([
+        ['@CodeApi:token', token],
+        ['@CodeApi:user', JSON.stringify(user)],
+      ]);
+    } catch (response) {
+        this.setState({ errorMessage: response.data.error});
+    }
+  };
+
+  render(){
+    return (
+      <View style={styles.container}>
+        
+        <button onPress={this.singIn} title="Entrar" />
+      </View>
+    );
+  }
+}
 const styles = StyleSheet.create({
   scrollView: {
     backgroundColor: Colors.lighter,
